@@ -8,14 +8,16 @@ import java.util.Stack;
 
 public class BreadthFirstSearch {
 
-	protected Set<Node> explored;
-
-	  protected List<Node> path;
-
-	  protected Store store;
+	Set<Node> explored;
+	List<Node> path;
+	Store store;
+	Node startNode;
+	ArrayList<Node> items;
 	
-	public BreadthFirstSearch(Store store) {
+	public BreadthFirstSearch(Store store, Node start, ArrayList<Node> items) {
 		this.store = store;
+		this.startNode = start;
+		this.items = items;
 	    explored = new HashSet<Node>();
 	    path = new ArrayList<Node>();
 	    solve();
@@ -23,9 +25,9 @@ public class BreadthFirstSearch {
 
 	public void solve() {
 
-		Node current = store.getStart();
+		Node current = startNode;
 		//Solved
-		if(current.equals(store.getGoal())){
+		if (items.contains(current)) {
 			System.out.println("Solved");
 			return;
 		}
@@ -38,44 +40,44 @@ public class BreadthFirstSearch {
 		while (!queue.isEmpty()) {
 			current = queue.peek();
 			//Stop the search if you find goal
-			if (current.equals(store.getGoal())){
+			if (items.contains(current)){
 				break;
 			}
-			int row = current.getRow();
-			int column = current.getColumn();
+			int row = current.row;
+			int column = current.col;
 			queue.remove();
 
 			//Explore successor to the left
-			Node square = new Node(row, column - 1);
-			if (!explored.contains(square) && !store.isBlocked(square)) {
+			Node square = store.storeMap[row][column-1];
+			if (!explored.contains(square) && square.traversable) {
 				queue.add(square);
 				explored.add(square);
 				square.setParent(current);
-				square.setPathCost(square.getParent().getPathCost()+1);
+				square.setPathCost(square.parentNode.getPathCost()+1);
 			}
 			//Explore successor to the top
-			square = new Node(row - 1, column);
-			if (!explored.contains(square) && !store.isBlocked(square)) {
+			square = store.storeMap[row-1][column];
+			if (!explored.contains(square) && square.traversable) {
 				queue.add(square);
 				explored.add(square);
 				square.setParent(current);
-				square.setPathCost(square.getParent().getPathCost()+1);
+				square.setPathCost(square.parentNode.getPathCost()+1);
 			}
 			//Explore successor to the right
-			square = new Node(row, column + 1);
-			if (!explored.contains(square) && !store.isBlocked(square)) {
+			square = store.storeMap[row][column+1];
+			if (!explored.contains(square) && square.traversable) {
 				queue.add(square);
 				explored.add(square);
 				square.setParent(current);
-				square.setPathCost(square.getParent().getPathCost()+1);
+				square.setPathCost(square.parentNode.getPathCost()+1);
 			}
 			//Explore successor to the bottom
-			square = new Node(row + 1, column);
-			if (!explored.contains(square) && !store.isBlocked(square)) {
+			square = store.storeMap[row+1][column];
+			if (!explored.contains(square) && square.traversable) {
 				queue.add(square);
 				explored.add(square);
 				square.setParent(current);
-				square.setPathCost(square.getParent().getPathCost()+1);
+				square.setPathCost(square.parentNode.getPathCost()+1);
 			}
 
 		}
@@ -85,7 +87,7 @@ public class BreadthFirstSearch {
 		Stack<Node> temp = new Stack<Node>();
 		while (current != null){
 			temp.add(current);
-			current = current.getParent();
+			current = current.parentNode;
 		}
 		while (!temp.isEmpty()){
 			path.add(temp.pop());
