@@ -13,16 +13,24 @@ public class FinalProject {
 		//shortestGroceryPath(new Node(1,1,true),new Node(1,1,true),list);
 		
 		
-		ArrayList<Node> items = new ArrayList<Node>();
-		items.add(store.storeMap[1][48]);
-		items.add(store.storeMap[8][46]);
-		BreadthFirstSearch BFS = new BreadthFirstSearch(store, store.entrance, items);
-	}
-	
-	public static void shortestGroceryPath(Node start, Node end, Node[] groceryList){
-		Node current = start;
+		ArrayList<Node> items = store.items;
+		Node start = store.entrance;
+		ArrayList<Node> path = new ArrayList<Node>();
 		
+		while (!items.isEmpty()) {
+			BreadthFirstSearch BFS = new BreadthFirstSearch(store, start, items);
+			System.out.println(BFS.getPath());
+			BFS.printSolution();
+			start = BFS.foundItem;
+			for (int i = 0; i < items.size(); i++) {
+				if (items.get(i).col == BFS.foundItem.col && items.get(i).row == BFS.foundItem.row)
+					items.remove(i);
+			}
+			path.addAll(BFS.getPath());
+		}
+		System.out.println(path);
 	}
+
 	
 	
 	
